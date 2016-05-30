@@ -1,5 +1,6 @@
 package br.com.inovant.bmi;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,11 @@ import android.widget.TextView;
 
 public class CalculatorActivity extends AppCompatActivity {
 
+    public static final String PREFS_NAME = "br.com.inovant.bmi";
+
+    private EditText height;
+    private EditText weight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,8 +27,15 @@ public class CalculatorActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final EditText height = (EditText) findViewById(R.id.etHeight);
-        final EditText weight = (EditText) findViewById(R.id.etWeight);
+        // Restore preferences
+        final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        final String weightValue = settings.getString("weight", "");
+        final String heightValue = settings.getString("height", "");
+
+        height = (EditText) findViewById(R.id.etHeight);
+        height.setText(heightValue);
+        weight = (EditText) findViewById(R.id.etWeight);
+        weight.setText(weightValue);
         final TextView result = (TextView) findViewById(R.id.result);
         final TextView category = (TextView) findViewById(R.id.category);
 
@@ -76,5 +89,20 @@ public class CalculatorActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("weight", weight.getText().toString());
+        editor.putString("height", height.getText().toString());
+
+        // Commit the edits!
+        editor.commit();
     }
 }
