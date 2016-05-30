@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">BMI Calculator</string>
     <string name="action_settings">Settings</string>
+    <string name="underweight">Underweight</string>
+    <string name="normal_weight">Normal weight</string>
+    <string name="overweight">"Overweight "</string>
+    <string name="obesity">Obesity</string>
+    <string name="height">Height:</string>
+    <string name="weight">Weight:</string>
+    <string name="calculate">Calculate</string>
 </resources>

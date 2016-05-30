@@ -34,13 +34,13 @@ public class CalculatorActivity extends AppCompatActivity {
                 result.setText(String.valueOf(bmi));
                 String categoryStr;
                 if(bmi < 18.5){
-                    categoryStr = "Underweight";
+                    categoryStr = getString(R.string.underweight);
                 } else if(bmi < 25){
-                    categoryStr = "Normal weight";
+                    categoryStr = getString(R.string.normal_weight);
                 } else if(bmi < 30){
-                    categoryStr = "Overweight ";
+                    categoryStr = getString(R.string.overweight);
                 } else{
-                    categoryStr = "Obesity ";
+                    categoryStr = getString(R.string.obesity);
                 }
                 category.setText(categoryStr);
             }
