@@ -6,12 +6,23 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 public class CalculatorActivity extends AppCompatActivity {
 
@@ -19,6 +30,11 @@ public class CalculatorActivity extends AppCompatActivity {
 
     private EditText height;
     private EditText weight;
+
+    private LineChart mChart;
+    private ArrayList<Entry> values = new ArrayList<>();
+    private ArrayList<Entry> normal = new ArrayList<>();
+    private long initialDate = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +72,7 @@ public class CalculatorActivity extends AppCompatActivity {
                     categoryStr = getString(R.string.obesity);
                 }
                 category.setText(categoryStr);
+                reloadChart(bmi);
             }
         });
 
@@ -67,6 +84,9 @@ public class CalculatorActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        mChart = (LineChart) findViewById(R.id.chart);
+        mChart.setTouchEnabled(false);
     }
 
     @Override
@@ -104,5 +124,37 @@ public class CalculatorActivity extends AppCompatActivity {
 
         // Commit the edits!
         editor.commit();
+    }
+
+    private void reloadChart(float bmi) {
+        long date = new DateTime().getMillis();
+        if(values.size() == 0){
+            initialDate = date;
+            DateAxisValueFormatter formatter = new DateAxisValueFormatter(initialDate);
+            mChart.getXAxis().setValueFormatter(formatter);
+        }
+
+        values.add(new Entry(date - initialDate, bmi));
+        normal.add(new Entry(date - initialDate, 25));
+
+        mChart.resetTracking();
+
+        LineDataSet d = new LineDataSet(values, "BMC");
+        d.setLineWidth(2.5f);
+        d.setColor(ColorTemplate.COLORFUL_COLORS[3]);
+
+        LineDataSet n = new LineDataSet(normal, "Normal");
+        n.enableDashedLine(15f, 15f, 0f);
+        n.setDrawIcons(false);
+        n.setLineWidth(2.5f);
+        n.setColor(ColorTemplate.COLORFUL_COLORS[1]);
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(d);
+        dataSets.add(n);
+
+        LineData data = new LineData(dataSets);
+        mChart.setData(data);
+        mChart.invalidate();
     }
 }
